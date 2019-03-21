@@ -436,10 +436,35 @@ func (mysql2excel *Mysql2Excel) creteSheet(sql, SheeftType string, file *xlsx.Fi
 
 	//写column数据
 	columnRow := sheet.AddRow()
+	//指定列宽
+	switch SheeftType {
+	case Sheeft1:
+		err = sheet.SetColWidth(3, 3, 23)
+		err = sheet.SetColWidth(6, 6, 20)
+		if err != nil {
+			fmt.Sprintln(err)
+		}
+	case Sheeft2:
+		err = sheet.SetColWidth(0, 0, 15)
+		err = sheet.SetColWidth(1, 1, 10)
+		if err != nil {
+			fmt.Sprintln(err)
+		}
+	case Sheeft3:
+		err = sheet.SetColWidth(1, 1, 23)
+		err = sheet.SetColWidth(4, 4, 20)
+		if err != nil {
+			fmt.Sprintln(err)
+		}
+	}
 	columnLen := len(columns)
 	for _, name := range columns {
 		cell := columnRow.AddCell()
 		cell.Value = name
+		border := *xlsx.NewBorder("thin", "thin", "thin", "thin")
+		style := xlsx.NewStyle()
+		style.Border = border
+		cell.SetStyle(style)
 	}
 
 	scanArgs := make([]interface{}, columnLen)
@@ -453,6 +478,11 @@ func (mysql2excel *Mysql2Excel) creteSheet(sql, SheeftType string, file *xlsx.Fi
 		for _, v := range values {
 			cell := row.AddCell()
 			cell.Value = string(v)
+			//设置单元格边框为实线
+			border := *xlsx.NewBorder("thin", "thin", "thin", "thin")
+			style := xlsx.NewStyle()
+			style.Border = border
+			cell.SetStyle(style)
 		}
 	}
 	return nil
